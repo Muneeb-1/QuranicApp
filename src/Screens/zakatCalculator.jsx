@@ -31,26 +31,40 @@ const ZakatCalculator = ({route}) => {
   const goldPricePerGram = 18879;
   const silverPricePerGram = 266.21;
   const goldNisab = 87.48;
-  const silverNisab = 135179;
+  const silverNisab = 612.36;
+  const silverAmountNisab = 135179;
 
   const handleCalculation = () => {
     const totalWorth =
       parseFloat(totalCash) +
       parseFloat(totalGold * goldPricePerGram) +
       parseFloat(totalSilver * silverPricePerGram);
-
+    console.log(totalWorth);
+    let nishabValue;
+    let totalZakat;
     if (totalGold >= goldNisab) {
-      const value = parseFloat(totalGold * goldPricePerGram);
-      setNishabCount(value);
-    } else setNishabCount(silverNisab);
+      nishabValue = goldNisab * goldPricePerGram;
+      totalZakat = totalWorth >= nishabValue ? totalWorth * 0.025 : 0;
+    } else if (totalGold < goldNisab && totalCash == 0) {
+      nishabValue = goldNisab * goldPricePerGram;
+      totalZakat = 0;
+    } else if (totalGold < goldNisab && totalCash > 0) {
+      nishabValue = silverAmountNisab;
+      totalZakat = totalWorth >= nishabValue ? totalWorth * 0.025 : 0;
+    } else if (totalSilver >= silverNisab) {
+      nishabValue = silverAmountNisab;
+      totalZakat = totalWorth >= nishabValue ? totalWorth * 0.025 : 0;
+    } else if (totalSilver < silverNisab && totalCash == 0) {
+      nishabValue = goldNisab * goldPricePerGram;
+      totalZakat = totalWorth >= nishabValue ? totalWorth * 0.025 : 0;
+    } else if (totalSilver < silverNisab) {
+      nishabValue = silverAmountNisab;
+      totalZakat = totalWorth >= nishabValue ? totalWorth * 0.025 : 0;
+    }
 
-    const totalZakat =
-      totalWorth >= nishabCount ? parseFloat(totalWorth * 0.025) : 0;
-
-    setTimeout(() => {
-      setZakatAmount(totalZakat.toFixed(2));
-      setWorth(totalWorth.toFixed(2));
-    }, 500);
+    setZakatAmount(totalZakat.toFixed(2));
+    setWorth(totalWorth.toFixed(2));
+    setNishabCount(nishabValue.toFixed(2));
   };
 
   const resetValue = () => {
