@@ -1,9 +1,4 @@
-import {
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import {ImageBackground, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {
   widthPercentageToDP as wp,
@@ -12,17 +7,18 @@ import {
 import Button from '../../component/Button/button';
 import TajweedModal from '../Modal/TajweedModal';
 
-const Tajweed = () => {
+const Tajweed = ({route}) => {
+  const lesson = route.params.lesson;
   const [modalVisible, setModalVisible] = useState(false);
   const [qari, setQari] = useState('');
   const handleModalOpen = data => {
     setQari(data);
     setModalVisible(true);
   };
-  const handleModalClose= ()=>{
+  const handleModalClose = () => {
     setQari('');
-    setModalVisible(false)
-  }
+    setModalVisible(false);
+  };
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -61,6 +57,7 @@ const Tajweed = () => {
         <TajweedModal
           visible={modalVisible}
           qariType={qari}
+          lesson={lesson}
           closeModal={() => handleModalClose()}
         />
       </ImageBackground>

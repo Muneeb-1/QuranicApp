@@ -6,7 +6,7 @@ import {
   ScrollView,
   ImageBackground,
   Image,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import axios from 'axios';
 import Geolocation from '@react-native-community/geolocation';
@@ -42,26 +42,34 @@ const Dashboard = ({navigation}) => {
 
   // //////////////////////////////////////////////////
 
-  useEffect(()=>{
-  setupTrackerPlayer()
-  },[])
+  useEffect(() => {
+    setupTrackerPlayer();
+  }, []);
+
+  const getLocation = () => {
+    try {
+      Geolocation.getCurrentPosition(
+        position => {
+          const {latitude, longitude} = position.coords;
+          dispatch({type: LATITUDE_LONGITUDE, payload: {latitude, longitude}});
+          getLocationName(latitude, longitude).then(name => {
+            setLocationData(name);
+            setLocationName(name.components.municipality);
+          });
+          fetchPrayerTimes(latitude, longitude);
+        },
+        error => {
+          console.log(error);
+        },
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const {latitude, longitude} = position.coords;
-        dispatch({type: LATITUDE_LONGITUDE, payload: {latitude, longitude}});
-        getLocationName(latitude, longitude).then(name => {
-          setLocationData(name);
-          setLocationName(name.components.municipality);
-        });
-        fetchPrayerTimes(latitude, longitude);
-      },
-      error => {
-        console.log(error);
-      },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
-    );
+    getLocation();
   }, []);
 
   const fetchPrayerTimes = async (latitude, longitude) => {
@@ -174,7 +182,7 @@ const Dashboard = ({navigation}) => {
           <CardView
             title={'Tajweed'}
             path={require('../../image/tajweed.png')}
-            onPress={() => navigation.navigate('Tajweed')}
+            onPress={() => navigation.navigate('Tajweed Lesson')}
           />
         </View>
         <View style={styles.section2}>
@@ -218,7 +226,7 @@ const Dashboard = ({navigation}) => {
           <CardView
             title={'Zakat Calculator'}
             path={require('../../image/zakatcal.png')}
-            onPress={() => navigation.navigate('Calculator')}
+            onPress={() => navigation.navigate('ZakatCategory')}
           />
         </View>
         <View style={styles.section2}>
@@ -246,7 +254,6 @@ const styles = StyleSheet.create({
   },
   section1: {
     height: hp('44%'),
-    backgroundColor: 'green',
   },
   section2: {
     marginTop: hp('1.4%'),

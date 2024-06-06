@@ -20,6 +20,8 @@ import {Provider, useDispatch} from 'react-redux';
 import store from './src/Redux/Store/store';
 import Geolocation from '@react-native-community/geolocation';
 import {LATITUDE_LONGITUDE} from './src/Redux/Constants/constants';
+import TajweedLesson from './src/Screens/tajweedLesson';
+import ZakatCategorySelect from './src/Screens/zakatCategorySelect';
 
 const Stack = createNativeStackNavigator();
 StatusBar.setBackgroundColor('#317873');
@@ -46,6 +48,7 @@ export default function App() {
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="TabNavigation" component={TabNavigation} />
           <Stack.Screen name="PrayerTime" component={PrayerTime} />
+          <Stack.Screen name="ZakatCategory" component={ZakatCategorySelect} />
           <Stack.Screen name="Calculator" component={ZakatCalculator} />
           <Stack.Screen name="HajjAndUmrah" component={HajjAndUmrah} />
           <Stack.Screen
@@ -109,6 +112,20 @@ export default function App() {
             options={{
               headerShown: true,
               title: `Dua's`,
+              headerStyle: {
+                backgroundColor: '#317873', // Set your desired color here
+              },
+              headerTitleAlign: 'center',
+              headerTintColor: '#fff',
+            }}
+          />
+
+          <Stack.Screen
+            name="Tajweed Lesson"
+            component={TajweedLesson}
+            options={{
+              headerShown: true,
+              title: `Tajweed Lesson`,
               headerStyle: {
                 backgroundColor: '#317873', // Set your desired color here
               },

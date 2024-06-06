@@ -90,13 +90,13 @@ const PrayerTime = ({route}) => {
             flexDirection: 'row',
           }}>
           <View style={styles.imageView1}>
-            <Text style={{...styles.txt, paddingLeft: hp('11%')}}>
+            <Text style={{...styles.txt, paddingLeft: hp('15%')}}>
               {islamicMonth}
             </Text>
             <Text
               style={{
                 color: '#fff',
-                paddingLeft: hp('3%'),
+                paddingLeft: hp('15%'),
                 fontFamily: 'Popline-Regular',
               }}>
               {formattedDate}
@@ -104,8 +104,8 @@ const PrayerTime = ({route}) => {
             <View
               style={{
                 flexDirection: 'row',
-                marginTop: hp('2%'),
-                paddingLeft: hp('4%'),
+                marginTop: hp('1%'),
+                paddingLeft: hp('15%'),
               }}>
               <Entypo name="location" color={'#fff'} size={25} />
               <Text style={styles.txt}>{locationData.components.county}</Text>
@@ -257,6 +257,7 @@ const styles = StyleSheet.create({
   imageView1: {
     padding: hp('3%'),
     flexDirection: 'column',
+    gap: 5,
   },
   txt: {
     color: '#fff',

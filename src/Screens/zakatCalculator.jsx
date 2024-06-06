@@ -15,74 +15,50 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-const ZakatCalculator = () => {
+const ZakatCalculator = ({route}) => {
+  console.log(route?.params.category);
+  const [category, setSelectedCategory] = useState(route?.params.category);
   const [totalZakatAmount, setZakatAmount] = useState(0);
   //////
-  const [zakatOnCash, setzakatOnCash] = useState(0);
-  const [zakatOnGold, setzakatOnGold] = useState(0);
-  const [zakatOnSilver, setzakatOnSilver] = useState(0);
+  const [totalCash, setTotalCash] = useState(0);
+  const [totalGold, setTotalGold] = useState(0);
+  const [totalSilver, setTotalSilver] = useState(0);
   //////
-  const [cashWorth, setCashWorth] = useState(0);
-  const [goldWorth, setGoldWorth] = useState(0);
-  const [silverWorth, setSilverWorth] = useState(0);
+  const [nishabCount, setNishabCount] = useState(0);
   /////
   const [worth, setWorth] = useState(0);
 
-  const calculateZakatOnCash = cash => {
-    const nisabThreshold = 1473000;
-    setCashWorth(cash);
-    const cashValue = parseFloat(cash) || 0; // Convert cash to a number or default to 0 if empty
-    const zakatAmount = cashValue >= nisabThreshold ? cashValue * 0.025 : 0;
-    setzakatOnCash(zakatAmount.toFixed(2));
-  };
-
-  const calculateZakatOnGold = weight => {
-    const nisabThreshold = 87.48;
-    const goldPrice = 18879;
-    const goldWeight = parseFloat(weight) || 0;
-    // Convert weight to a number or default to 0 if empty
-    const totalValue = goldWeight * goldPrice;
-    setGoldWorth(totalValue);
-    const zakatAmount = goldWeight >= nisabThreshold ? totalValue * 0.025 : 0;
-    setzakatOnGold(zakatAmount.toFixed(2));
-  };
-
-  const calculateZakatOnSilver = weight => {
-    const nisabThreshold = 612.36;
-    const silverPrice = 223;
-    const silverWeight = parseFloat(weight) || 0;
-    const totalValue = silverWeight * silverPrice;
-    setSilverWorth(totalValue);
-    const zakatAmount = silverWeight >= nisabThreshold ? totalValue * 0.025 : 0;
-    setzakatOnSilver(zakatAmount.toFixed(2));
-  };
+  const goldPricePerGram = 18879;
+  const silverPricePerGram = 266.21;
+  const goldNisab = 87.48;
+  const silverNisab = 135179;
 
   const handleCalculation = () => {
-    console.log('C', cashWorth);
-    console.log('G', goldWorth);
-    console.log('S', silverWorth);
-    const totalzakat =
-      parseFloat(zakatOnCash) +
-      parseFloat(zakatOnGold) +
-      parseFloat(zakatOnSilver);
+    const totalWorth =
+      parseFloat(totalCash) +
+      parseFloat(totalGold * goldPricePerGram) +
+      parseFloat(totalSilver * silverPricePerGram);
 
-    const totalworth =
-      parseFloat(cashWorth) + parseFloat(goldWorth) + parseFloat(silverWorth);
+    if (totalGold >= goldNisab) {
+      const value = parseFloat(totalGold * goldPricePerGram);
+      setNishabCount(value);
+    } else setNishabCount(silverNisab);
+
+    const totalZakat =
+      totalWorth >= nishabCount ? parseFloat(totalWorth * 0.025) : 0;
 
     setTimeout(() => {
-      setZakatAmount(totalzakat.toFixed(2));
-      setWorth(totalworth.toFixed(2));
+      setZakatAmount(totalZakat.toFixed(2));
+      setWorth(totalWorth.toFixed(2));
     }, 500);
   };
 
   const resetValue = () => {
     setZakatAmount(0);
-    setzakatOnCash(0);
-    setzakatOnGold(0);
-    setzakatOnSilver(0);
-    setSilverWorth(0);
-    setCashWorth(0);
-    setGoldWorth(0);
+    setTotalCash(0);
+    setTotalGold(0);
+    setTotalSilver(0);
+    setNishabCount(0);
     setWorth(0);
   };
 
@@ -118,7 +94,7 @@ const ZakatCalculator = () => {
               alignItems: 'flex-start',
             }}>
             <Text style={{...styles.txt, color: '#fff'}}>
-              ⚪ Cash in Hand (approximately Rs. 1,473,000)
+              ⚪ Cash in Hand (approximately Rs. 1,35,179)
             </Text>
             <Text style={{...styles.txt, color: '#fff'}}>
               ⚪ Value of Gold (approximately 87.48 Gram)
@@ -157,71 +133,73 @@ const ZakatCalculator = () => {
                   placeholderTextColor={'#808080'}
                   keyboardType="numeric"
                   textAlign="center"
-                  onChangeText={text => calculateZakatOnCash(text)}
+                  onChangeText={text => setTotalCash(text)}
                   style={styles.input}></TextInput>
               </View>
+              {category == 'Gold and Cash' ? (
+                <View
+                  style={{
+                    ...styles.section,
+                    marginTop: hp('3%'),
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      ...styles.heading,
+                      color: 'yellow',
+                      marginBottom: hp('1%'),
+                    }}>
+                    Gold
+                  </Text>
 
-              <View
-                style={{
-                  ...styles.section,
-                  marginTop: hp('3%'),
-                  alignItems: 'center',
-                }}>
-                <Text
+                  <Text
+                    style={{
+                      ...styles.txt,
+                      color: '#fff',
+                      marginBottom: hp('0.3%'),
+                    }}>
+                    Value of Gold in grams
+                  </Text>
+                  <TextInput
+                    placeholder="0.00 g"
+                    placeholderTextColor={'#808080'}
+                    keyboardType="numeric"
+                    textAlign="center"
+                    onChangeText={text => setTotalGold(text)}
+                    style={styles.input}></TextInput>
+                </View>
+              ) : (
+                <View
                   style={{
-                    ...styles.heading,
-                    color: 'yellow',
-                    marginBottom: hp('1%'),
+                    ...styles.section,
+                    marginTop: hp('3%'),
+                    alignItems: 'center',
                   }}>
-                  Gold
-                </Text>
-                <Text
-                  style={{
-                    ...styles.txt,
-                    color: '#fff',
-                    marginBottom: hp('0.3%'),
-                  }}>
-                  Value of Gold in grams
-                </Text>
-                <TextInput
-                  placeholder="0.00 g"
-                  placeholderTextColor={'#808080'}
-                  keyboardType="numeric"
-                  textAlign="center"
-                  onChangeText={text => calculateZakatOnGold(text)}
-                  style={styles.input}></TextInput>
-              </View>
-
-              <View
-                style={{
-                  ...styles.section,
-                  marginTop: hp('3%'),
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    ...styles.heading,
-                    color: 'yellow',
-                    marginBottom: hp('1%'),
-                  }}>
-                  Silver
-                </Text>
-                <Text
-                  style={{
-                    ...styles.txt,
-                    color: '#fff',
-                    marginBottom: hp('0.3%'),
-                  }}>
-                  Value of Silver in grams
-                </Text>
-                <TextInput
-                  placeholder="0.00 g"
-                  placeholderTextColor={'#808080'}
-                  keyboardType="numeric"
-                  textAlign="center"
-                  onChangeText={text => calculateZakatOnSilver(text)}
-                  style={styles.input}></TextInput>
-              </View>
+                  <Text
+                    style={{
+                      ...styles.heading,
+                      color: 'yellow',
+                      marginBottom: hp('1%'),
+                    }}>
+                    Silver
+                  </Text>
+                  <Text
+                    style={{
+                      ...styles.txt,
+                      color: '#fff',
+                      marginBottom: hp('0.3%'),
+                    }}>
+                    Value of Silver in grams
+                  </Text>
+                  <TextInput
+                    placeholder="0.00 g"
+                    placeholderTextColor={'#808080'}
+                    keyboardType="numeric"
+                    textAlign="center"
+                    onChangeText={text => setTotalSilver(text)}
+                    style={styles.input}></TextInput>
+                </View>
+              )}
 
               <View style={{...styles.section, marginTop: hp('5%')}}>
                 <TouchableOpacity
